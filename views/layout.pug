@@ -1,0 +1,49 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+    //- link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    nav.navbar.navbar-dark.bg-dark
+      a.navbar-brand(href='/') Contact List
+      .d-flex
+        if user
+          span.navbar-text.mr-3 Hello, #{user.firstName}!
+          a#logout-btn.btn.btn-outline-light(href='#') Logout
+        else
+          a.btn.btn-outline-light(href='/login') Login
+
+    .container
+      block content
+
+    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')
+
+    // JavaScript to handle logout
+    script.
+      document.addEventListener('DOMContentLoaded', () => {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', async (event) => {
+            event.preventDefault(); // Prevent the default anchor click behavior
+
+            try {
+              const response = await fetch('/logout', {
+                method: 'POST', // Use POST for logout
+                credentials: 'include'
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+
+              // Redirect to login page if necessary
+              window.location.href = '/login'; // Directly redirect to login page
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+          });
+        }
+      });

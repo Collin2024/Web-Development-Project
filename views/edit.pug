@@ -1,0 +1,86 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-md-8.offset-md-2
+        h1 Edit Contact
+        form(action=`/${contact.id}/edit`, method='post', onsubmit='return validateCoordinates()')
+          .form-group
+            label(for='title') Title
+            input.form-control(type='text', name='title', value=contact.title, required)
+          .form-group
+            label(for='firstName') First Name
+            input.form-control(type='text', name='firstName', value=contact.firstName, required)
+          .form-group
+            label(for='lastName') Last Name
+            input.form-control(type='text', name='lastName', value=contact.lastName, required)
+          .form-group
+            label(for='phoneNumber') Phone Number
+            input.form-control(type='text', name='phoneNumber', value=contact.phoneNumber, required)
+          .form-group
+            label(for='emailAddress') Email Address
+            input.form-control(type='email', name='emailAddress', value=contact.emailAddress, required)
+          .form-group
+            label(for='street') Street
+            input.form-control(type='text', name='street', value=contact.street)
+          .form-group
+            label(for='city') City
+            input.form-control(type='text', name='city', value=contact.city)
+          .form-group
+            label(for='state') State
+            input.form-control(type='text', name='state', value=contact.state)
+          .form-group
+            label(for='zip') Zip
+            input.form-control(type='text', name='zip', value=contact.zip)
+          .form-group
+            label(for='country') Country
+            input.form-control(type='text', name='country', value=contact.country)
+          .form-group
+            label(for='latitude') Latitude
+            input.form-control(type='number', name='latitude', id='latitude', step='0.0001', value=contact.Latitude, required, placeholder='e.g., 12.0034')
+          .form-group
+            label(for='longitude') Longitude
+            input.form-control(type='number', name='longitude', id='longitude', step='0.0001', value=contact.Longitude, required, placeholder='e.g., 45.233')
+          .form-group
+            .form-check
+              input.form-check-input(type='checkbox', name='contactByEmail', id='contactByEmail', checked=contact.contactByEmail)
+              label.form-check-label(for='contactByEmail') Contact by Email
+          .form-group
+            .form-check
+              input.form-check-input(type='checkbox', name='contactByPhone', id='contactByPhone', checked=contact.contactByPhone)
+              label.form-check-label(for='contactByPhone') Contact by Phone
+          .form-group
+            .form-check
+              input.form-check-input(type='checkbox', name='contactByMail', id='contactByMail', checked=contact.contactByMail)
+              label.form-check-label(for='contactByMail') Contact by Mail
+          button.btn.btn-primary.m-2(type='submit') Save Changes
+          a.btn.btn-secondary(href=`/${contact.id}`) Cancel
+
+  script.
+    function validateLatitude(latitude) {
+      const latRegex = /^-?([1-8]?\d(\.\d+)?|90(\.0+)?)$/;
+      return latRegex.test(latitude);
+    }
+
+    function validateLongitude(longitude) {
+      const lonRegex = /^-?((1[0-7]\d(\.\d+)?|([1-9]?\d(\.\d+)?))|180(\.0+)?)$/;
+      return lonRegex.test(longitude);
+    }
+
+    function validateCoordinates() {
+      const latitudeInput = document.getElementById('latitude').value;
+      const longitudeInput = document.getElementById('longitude').value;
+
+      if (!validateLatitude(latitudeInput)) {
+        alert('Invalid latitude. Please enter a value between -90 and 90.');
+        return false;
+      }
+
+      if (!validateLongitude(longitudeInput)) {
+        alert('Invalid longitude. Please enter a value between -180 and 180.');
+        return false;
+      }
+
+      return true;
+    }

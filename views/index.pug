@@ -1,0 +1,107 @@
+extends layout
+
+block content
+  .container-fluid
+    .d-flex.justify-content-between.align-items-center.mb-3
+      h1 Contact List
+      a.btn.btn-primary(href='/create') New contact
+
+    .table-responsive
+      table.table.table-striped
+        thead.thead-dark
+          tr
+            th Name
+            th Phone
+            th Email
+            th Address
+            th Preferences
+            th Latitude 
+            th Longitude
+        tbody
+          each contact in contacts
+            tr(data-lat=`${contact.Latitude}` data-lng=`${contact.Longitude}`)
+              td
+                a(href=`/${contact.id}`) #{contact.firstName} #{contact.lastName}
+              td #{contact.phoneNumber}
+              td #{contact.emailAddress}
+              td #{contact.street}, #{contact.city}, #{contact.state} #{contact.zip}, #{contact.country}
+              td
+                - const preferences = []
+                if contact.contactByEmail
+                  - preferences.push('Email')
+                if contact.contactByPhone
+                  - preferences.push('Phone')
+                if contact.contactByMail
+                  - preferences.push('Mail')
+                | #{preferences.join(', ')}
+              td
+                | #{contact.Latitude || 'N/A'}
+              td
+                | #{contact.Longitude || 'N/A'}
+
+    // Map Container
+    .container-fluid
+      h2 Map of Contacts
+      #map-container
+      // Inline CSS for map container
+      style.
+        #map-container {
+          width: 100%; /* Set your desired width */
+          height: 500px; /* Set your desired height */
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+          border-radius: 10px;
+          overflow: hidden;
+          position: relative;
+        }
+
+      // Include Leaflet CSS
+      link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css")
+      // Include Leaflet library
+      script(src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js")
+
+      // Ensure script for map initialization runs after DOM content is loaded
+      script.
+        document.addEventListener('DOMContentLoaded', () => {
+          const mapContainer = document.getElementById('map-container');
+          if (mapContainer) {
+            const map = L.map(mapContainer).setView([37.0902, -95.7129], 5); // Set initial view to America
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            // Custom marker icon
+            const customIcon = L.icon({
+              iconUrl: '/images/map-pin.svg', // Path to your custom marker icon
+              iconSize: [45, 45], // Adjust the size as needed
+              iconAnchor: [22, 94], // Adjust the anchor point
+              popupAnchor: [-3, -76] // Adjust the popup anchor point
+            });
+
+            // Data from server
+            const contacts = !{JSON.stringify(contacts)}; // Inject the contact data
+
+            contacts.forEach(contact => {
+              if (contact.Latitude && contact.Longitude) {
+                L.marker([contact.Latitude, contact.Longitude], { icon: customIcon }).addTo(map)
+                  .bindPopup(`<b>${contact.firstName} ${contact.lastName}</b><br/>${contact.emailAddress}<br/>${contact.phoneNumber}`);
+              }
+            });
+
+            // Add event listener for table rows
+            document.querySelectorAll('tbody tr').forEach(row => {
+              row.addEventListener('click', () => {
+                const lat = parseFloat(row.dataset.lat);
+                const lng = parseFloat(row.dataset.lng);
+
+                if (lat && lng) {
+                  map.setView([lat, lng], 13); // Zoom to the contact's location
+                }
+              });
+            });
+          } else {
+            console.error('Map container not found.');
+          }
+        });

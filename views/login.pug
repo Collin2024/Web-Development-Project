@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  .row.justify-content-center
+    .col-md-6
+      h2.text-center Sign in
+      if error
+        .alert.alert-danger Sorry, couldn't sign you in...
+      form(method='POST', action='/login')
+        .form-group
+          label(for='username') Username
+          input.form-control(type='text', name='username', required)
+        .form-group
+          label(for='password') Password
+          input.form-control(type='password', name='password', required)
+        button.btn.btn-primary.btn-block(type='submit') Sign in
+        a.btn.btn-secondary.btn-block(href='/') Nevermind
+      p.text-center
+        | Don't have an account yet?
+        a(href='/signup') Sign up here!

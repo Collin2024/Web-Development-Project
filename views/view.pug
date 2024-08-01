@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-md-8.offset-md-2
+        .d-flex.justify-content-between.align-items-center.mb-3
+          h1 Contact Info
+          //- a(href='/logout').btn.btn-link Sign out
+        h2 #{contact.firstName} #{contact.lastName}
+        hr
+        p
+          strong Phone number:
+          | #{contact.phoneNumber}
+        p
+          | May be contacted by #{contact.contactByPhone ? 'phone or text' : 'text'}
+        p
+          strong Email address:
+          | #{contact.emailAddress}
+        p
+          | May be contacted by #{contact.contactByEmail ? 'email' : 'none'}
+        p
+          strong Address:
+          br
+          | #{contact.street}
+          br
+          | #{contact.city}, #{contact.state} #{contact.zip}
+          br
+          | #{contact.country}
+        p
+          | May NOT be contacted by mail
+        .d-flex.justify-content-between.mt-3
+          a(href='/').btn.btn-link Back to list
+          a.btn.btn-primary(href=`/${contact.id}/edit`) Edit contact
+          a.btn.btn-danger(href=`/${contact.id}/delete`) Delete contact
